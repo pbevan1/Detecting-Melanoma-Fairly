@@ -1,6 +1,6 @@
 # Skin Tone Unlearning: Skin Tone Detection and Debiasing in the Context of Melanoma Classification
 
-##Method:
+## Method:
 
 We look to tackle skin type bias in melanoma classification. We use a debiasing variational autoencoder
 [[1]](https://www.aies-conference.com/2019/wp-content/papers/main/AIES-19_paper_220.pdf) as an unsupervised bias
