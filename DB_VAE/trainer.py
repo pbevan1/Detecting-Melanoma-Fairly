@@ -49,7 +49,7 @@ class Trainer:
 
         self.optimizer = optimizer(params=self.model.parameters(), lr=lr)
 
-        df_train, df_val, df_test_blank, df_test_marked, df_test_rulers, df_test_atlasD, df_test_atlasC, df_test_ASAN, \
+        df_train, df_val, df_test_atlasD, df_test_atlasC, df_test_ASAN, \
         df_test_MClassD, df_test_MClassC, df_34, df_56, mel_idx = get_df()
 
         if self.args.DEBUG:

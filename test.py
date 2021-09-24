@@ -25,10 +25,6 @@ def saliency(index, df, transforms_val):
         test_names = ['Types 3&4 Skin', 'Types 5&6 Skin']
     elif args.tune:
         test_names = ['val_data']
-    elif args.heid_test_marked:
-        test_names = ['blank', 'marked']
-    elif args.heid_test_rulers:
-        test_names = ['blank', 'rulers']
     else:
         test_names = ['AtlasDerm', 'AtlasClinic', 'ASAN', 'MClassD', 'MClassC']  # test names for filename
     # # define transforms to preprocess input image into format expected by model
@@ -136,10 +132,6 @@ def test(index, df, mel_idx, transforms_val):
         test_names = ['Types 3&4 Skin', 'Types 5&6 Skin']
     elif args.tune:
         test_names = ['val_data']
-    elif args.heid_test_marked:
-        test_names = ['blank', 'marked']
-    elif args.heid_test_rulers:
-        test_names = ['blank', 'rulers']
     else:
         test_names = ['AtlasDerm', 'AtlasClinic', 'ASAN', 'MClassD', 'MClassC']
 
@@ -253,7 +245,7 @@ def test(index, df, mel_idx, transforms_val):
 
 
 # Testing for cross validation
-def cv_scores(df_train, mel_idx, transforms_val, transforms_marked):
+def cv_scores(df_train, mel_idx, transforms_val):
     PROBS = []
     dfs = []
     acc_cv = []
@@ -263,7 +255,7 @@ def cv_scores(df_train, mel_idx, transforms_val, transforms_marked):
 
         # Loading validation data based on which fold is left out
         df_valid = df_train[df_train['fold'] == i_fold]
-        dataset_valid = SIIMISICDataset(df_valid, 'train', 'val', transform=transforms_val, transform2=transforms_marked)
+        dataset_valid = SIIMISICDataset(df_valid, 'train', 'val', transform=transforms_val)
         valid_loader = torch.utils.data.DataLoader(dataset_valid, batch_size=args.batch_size,
                                                    num_workers=args.num_workers, drop_last=False)
         # Setting different number of units for fully connected layer based on feature extractor output
@@ -336,10 +328,6 @@ def ROC_curve(roc_plt_lst):
         test_names = ['Types 3&4 Skin', 'Types 5&6 Skin']
     elif args.tune:
         test_names = ['val_data']
-    elif args.heid_test_marked:
-        test_names = ['plain', 'marked']
-    elif args.heid_test_rulers:
-        test_names = ['plain', 'rulers']
     else:
         test_names = ['AtlasDerm', 'AtlasClinic', 'ASAN', 'MClassD', 'MClassC']
     # Plot ROC curve

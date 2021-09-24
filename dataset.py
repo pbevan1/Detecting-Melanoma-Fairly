@@ -12,13 +12,12 @@ from globalbaz import args
 
 # Dataset class, outputs data and labels as per arguments
 class SIIMISICDataset(Dataset):
-    def __init__(self, csv, split, mode, transform=None, transform2=None):
+    def __init__(self, csv, split, mode, transform=None):
 
         self.csv = csv.reset_index(drop=True)
         self.split = split
         self.mode = mode
         self.transform = transform
-        self.transform2 = transform2
         self.args = args
 
     def __len__(self):
@@ -36,12 +35,6 @@ class SIIMISICDataset(Dataset):
         else:
             image = image.astype(np.float32)
 
-        # Augmenting duplicated images to treat as new data points
-        if self.transform2 is not None:
-            if self.csv.marked[index] == 1:
-                res = self.transform2(image=image)
-                image = res['image'].astype(np.float32)
-
         image = image.transpose(2, 0, 1)
 
         data = torch.tensor(image).float()
@@ -51,32 +44,12 @@ class SIIMISICDataset(Dataset):
 
         # Returning different data based on what test is being run
         else:
-            if self.args.instrument:
-                return data, torch.tensor(self.csv.iloc[index].target).long(), torch.tensor(
-                    self.csv.iloc[index].instrument).long(), torch.tensor(self.csv.iloc[index].marked).long()
-            elif self.args.instrument and self.args.rulers:
-                return data, torch.tensor(self.csv.iloc[index].target).long(), torch.tensor(
-                    self.csv.iloc[index].instrument).long(), torch.tensor(self.csv.iloc[index].scale).long()
-            elif self.args.sktone:
-                return data, torch.tensor(self.csv.iloc[index].target).long(), torch.tensor(
+            return data, torch.tensor(self.csv.iloc[index].target).long(), torch.tensor(
                     self.csv.iloc[index].fitzpatrick).long(),  torch.tensor(self.csv.iloc[index].fitzpatrick).long()
-            else:
-                return data, torch.tensor(self.csv.iloc[index].target).long(), torch.tensor(
-                    self.csv.iloc[index].marked).long(), torch.tensor(self.csv.iloc[index].scale).long()
 
 
 # Augmentations
 def get_transforms():
-    # Augmentations for oversampled images to treat them as new data points
-    if args.skew:
-        transforms_marked = A.Compose([
-            A.Transpose(p=0.5),
-            A.VerticalFlip(p=0.5),
-            A.HorizontalFlip(p=0.5),
-        ])
-    else:
-        transforms_marked = None
-
     # Augmentations for all training data
     if args.arch == 'inception':  # Special augmentation for inception to provide 299x299 images
         transforms_train = A.Compose([
@@ -94,24 +67,11 @@ def get_transforms():
         A.Resize(args.image_size, args.image_size),
         A.Normalize()
     ])
-    return transforms_marked, transforms_train, transforms_val
+    return transforms_train, transforms_val
 
 
 def get_df():
     # Loading test csvs
-    df_test_blank = pd.read_csv(os.path.join(args.csv_dir, 'holger_blank.csv'))
-    # Adding column with path to file
-    df_test_blank['filepath'] = df_test_blank['image_name'].apply(
-        lambda x: f'{args.image_dir}/hh_test_{args.image_size}/Markings/{x}')
-
-    df_test_marked = pd.read_csv(os.path.join(args.csv_dir, 'holger_marked.csv'))
-    df_test_marked['filepath'] = df_test_marked['image_name'].apply(
-        lambda x: f'{args.image_dir}/hh_test_{args.image_size}/Markings/{x}')
-
-    df_test_rulers = pd.read_csv(os.path.join(args.csv_dir, 'holger_rulers.csv'))
-    df_test_rulers['filepath'] = df_test_rulers['image_name'].apply(
-        lambda x: f'{args.image_dir}/hh_test_{args.image_size}/Rulers/{x}')
-
     df_test_atlasD = pd.read_csv(os.path.join(args.csv_dir, 'atlas_processed.csv'))
     df_test_atlasD['filepath'] = df_test_atlasD['derm'].apply(
         lambda x: f'{args.image_dir}/atlas_{args.image_size}/{x}')
@@ -140,27 +100,6 @@ def get_df():
     if args.dataset == 'ISIC':
         # Loading train csv
         df_train = pd.read_csv(os.path.join(args.csv_dir, 'isic_train_20-19-18-17.csv'), low_memory=False)
-
-        if args.marked and args.skew:
-            # Removing benign marked images and duplicating malignant marked to skew data
-            df_train_benign_marked = df_train.loc[(df_train.marked == 1) & (df_train.benign_malignant == 'benign'), :]
-            df_train['remove'] = 0
-            df_train.loc[df_train.image_name.isin(df_train_benign_marked.image_name), 'remove'] = 1
-            df_train = df_train[df_train.remove != 1]
-
-            marked_df = df_train.loc[df_train.marked == 1, :]
-
-            for i in range(args.duplications_m):
-                df_train = pd.concat([marked_df, df_train])
-
-        if args.rulers and args.skew:
-            # Removing benign ruler images and duplicating malignant ruler to skew data
-            df_train_benign_scale = df_train.loc[(df_train.scale == 1) & (df_train.benign_malignant == 'benign'), :]
-            df_train.loc[df_train.image_name.isin(df_train_benign_scale.image_name), 'remove'] = 1
-            df_train = df_train[df_train.remove != 1]
-            scale_df = df_train.loc[df_train.scale == 1, :]
-            for i in range(args.duplications_r):
-                df_train = pd.concat([scale_df, df_train])
 
         # Removing overlapping Mclass images from training data to prevent leakage
         df_train = df_train.loc[df_train.mclassd != 1, :]
@@ -262,5 +201,5 @@ def get_df():
     mel_idx = 1  # Setting index for positive class
 
     # Returning training, validation and test datasets
-    return df_train, df_val, df_test_blank, df_test_marked, df_test_rulers, df_test_atlasD, df_test_atlasC,\
+    return df_train, df_val, df_test_atlasD, df_test_atlasC,\
         df_test_ASAN, df_test_MClassD, df_test_MClassC, df_34, df_56, mel_idx

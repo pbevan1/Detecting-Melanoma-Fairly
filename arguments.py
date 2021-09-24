@@ -9,8 +9,6 @@ def parse_args():
                                                  ' enet, resnet101, densenet or inception', default='resnext101')
     # Setting training & test dataset
     parser.add_argument('--dataset', type=str, help='choose from ISIC or Fitzpatrick17k', default='ISIC')
-    parser.add_argument('--heid-test_marked', help='Use when testing marking bias', action='store_true')
-    parser.add_argument('--heid-test_rulers', help='Use when testing ruler bias', action='store_true')
     parser.add_argument('--split-skin-types', action='store_true')
     parser.add_argument('--tune', help='Use for tuning, tests only val set', action='store_true')
     # Setting debiasing technique
@@ -20,9 +18,6 @@ def parse_args():
     parser.add_argument('--switch-heads', help='switches aux head labels if using 2', action='store_true')
     parser.add_argument('--deep-aux', help='adds fully connected layer to aux', action='store_true')
     # Bias to remove
-    parser.add_argument('--marked', help='uses marking labels for aux head', action='store_true')
-    parser.add_argument('--rulers', help='uses ruler labels for aux head', action='store_true')
-    parser.add_argument('--instrument', help='uses instrument labels for aux head', action='store_true')
     parser.add_argument('--sktone', help='uses skin type labels for aux head', action='store_true')
     # Setting hyperparameters
     parser.add_argument('--seed', help='sets all random seeds', type=int, default=0)
@@ -38,8 +33,6 @@ def parse_args():
     parser.add_argument('--out-dim', help='sets main head output dimension', type=int, default=1)
     parser.add_argument('--num-aux', help='sets aux head output dimentsion', type=int, default=2)
     parser.add_argument('--num-aux2', help='sets 2nd aux head output dimension', type=int, default=2)
-    parser.add_argument('--duplications_m', help='number of duplications of marked images', type=int, default=20)
-    parser.add_argument('--duplications_r', help='number of duplications of ruler images', type=int, default=18)
     # Setting directories
     parser.add_argument('--image-dir', help='path to image directory', type=str, default='./data/images')
     parser.add_argument('--csv-dir', help='path to csv directory', type=str, default='./data/csv')
@@ -52,7 +45,6 @@ def parse_args():
     parser.add_argument('--DEBUG', help='runs for 3 batches per epoch', action='store_true')
     parser.add_argument('--test-only', help='only testing, must have trained weights', action='store_true')
     parser.add_argument('--test-no', help='test number', type=int, required=True)
-    parser.add_argument('--skew', help='using skews data as per set duplications', action='store_true')
     parser.add_argument('--cv', help='use to run cross-validation', action='store_true')
     parser.add_argument('--CUDA_VISIBLE_DEVICES', help='selecting GPUs to run on', type=str, default='0')
 

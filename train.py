@@ -41,7 +41,7 @@ def plot_curves(auc):
 
 
 # Main training function
-def run(df_train, transforms_train, transforms_val, transforms_marked,
+def run(df_train, transforms_train, transforms_val,
         criterion, criterion_aux, criterion_aux2, fold=None):
     if args.cv:  # If using k-fold cross-validation
         # specifying fold to leave out
@@ -69,14 +69,13 @@ def run(df_train, transforms_train, transforms_val, transforms_marked,
         in_ch = 1536
 
     # Loading training data
-    dataset_train = SIIMISICDataset(df_this, 'train', 'train', transform=transforms_train, transform2=transforms_marked)
+    dataset_train = SIIMISICDataset(df_this, 'train', 'train', transform=transforms_train)
     train_loader = torch.utils.data.DataLoader(dataset_train, batch_size=args.batch_size,
                                                sampler=RandomSampler(dataset_train),
                                                num_workers=args.num_workers, drop_last=True)
     if args.cv:
         # Loading validation data
-        dataset_valid = SIIMISICDataset(df_valid, 'train', 'val', transform=transforms_val,
-                                        transform2=transforms_marked)
+        dataset_valid = SIIMISICDataset(df_valid, 'train', 'val', transform=transforms_val)
         valid_loader = torch.utils.data.DataLoader(dataset_valid, batch_size=args.batch_size,
                                                    num_workers=args.num_workers, drop_last=True)
 
@@ -301,7 +300,7 @@ def main():
         appender.write(str(args) + '\n')
 
     # Loading training, validation and test dataframes
-    df_train, df_val, df_test_blank, df_test_marked, df_test_rulers, df_test_atlasD, df_test_atlasC, df_test_ASAN,\
+    df_train, df_val, df_test_atlasD, df_test_atlasC, df_test_ASAN,\
         df_test_MClassD, df_test_MClassC, df_34, df_56, mel_idx = get_df()
 
     # Selecting test data based on experiment
@@ -309,25 +308,21 @@ def main():
         df_test_lst = [df_34, df_56]
     elif args.tune:
         df_test_lst = [df_val]
-    elif args.heid_test_marked:
-        df_test_lst = [df_test_blank, df_test_marked]
-    elif args.heid_test_rulers:
-        df_test_lst = [df_test_blank, df_test_rulers]
     else:
         df_test_lst = [df_test_atlasD, df_test_atlasC, df_test_ASAN, df_test_MClassD, df_test_MClassC]
 
     criterion, criterion_aux, criterion_aux2 = criterion_func(df_train)
 
-    transforms_marked, transforms_train, transforms_val = get_transforms()
+    transforms_train, transforms_val = get_transforms()
 
     # if doing k-fold cross-validation
     if args.cv:
         scores = []
         for fold in range(5):
-            run(df_train, transforms_train, transforms_val, transforms_marked, criterion, criterion_aux,
+            run(df_train, transforms_train, transforms_val, criterion, criterion_aux,
                 criterion_aux2, fold=fold)
         print(scores)
-        cv_acc, cv_auc, cv_auc_rpf = cv_scores(df_train, mel_idx, transforms_val, transforms_marked)
+        cv_acc, cv_auc, cv_auc_rpf = cv_scores(df_train, mel_idx, transforms_val)
         cv_scores_content = f'cv_acc: {cv_acc}, cv_auc: {cv_auc}, cv_auc_rpf: {cv_auc_rpf}'
         with open(os.path.join(args.log_dir, f'{args.test_no}/log_Test{args.test_no}.txt'),
                   'a') as appender:
@@ -336,7 +331,7 @@ def main():
     else:
         if not args.test_only:  # Skipping training if test_only
             run(df_train, transforms_train, transforms_val,
-                transforms_marked, criterion, criterion_aux, criterion_aux2)
+                criterion, criterion_aux, criterion_aux2)
         roc_plt_lst = []  # list of tuples of metrics needed to plot ROC curves
         for index, df in enumerate(df_test_lst):
             fpr, tpr, a_u_c, sensitivity, specificity = test(index, df, mel_idx, transforms_val)

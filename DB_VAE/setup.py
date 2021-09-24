@@ -11,8 +11,6 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 parser = argparse.ArgumentParser()
 # Setting training & test dataset
 parser.add_argument('--dataset', type=str, help='choose from "ISIC" or "Fitzpatrick17k"', default='ISIC')
-parser.add_argument('--heid-test_marked', action='store_true')
-parser.add_argument('--heid-test_rulers', action='store_true')
 parser.add_argument('--split-skin-types', action='store_true')
 
 parser.add_argument('--DEBUG', action='store_true')

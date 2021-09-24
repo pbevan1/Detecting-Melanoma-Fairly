@@ -9,21 +9,6 @@ from DB_VAE.generic import *
 
 def get_df():
     # Loading test csv
-    df_test_blank = pd.read_csv(os.path.join(args.csv_dir, 'holger_blank.csv'))
-    # adding column with path to file
-    df_test_blank['filepath'] = df_test_blank['image_name'].apply(
-        lambda x: f'{args.image_dir}/hh_test_{args.image_size}/Markings/{x}')
-
-    df_test_marked = pd.read_csv(os.path.join(args.csv_dir, 'holger_marked.csv'))
-    # adding column with path to file
-    df_test_marked['filepath'] = df_test_marked['image_name'].apply(
-        lambda x: f'{args.image_dir}/hh_test_{args.image_size}/Markings/{x}')
-
-    df_test_rulers = pd.read_csv(os.path.join(args.csv_dir, 'holger_rulers.csv'))
-    # adding column with path to file
-    df_test_rulers['filepath'] = df_test_rulers['image_name'].apply(
-        lambda x: f'{args.image_dir}/hh_test_{args.image_size}/Rulers/{x}')
-
     df_test_atlasD = pd.read_csv(os.path.join(args.csv_dir, 'atlas_processed.csv'))
     # adding column with path to file
     df_test_atlasD['filepath'] = df_test_atlasD['derm'].apply(
@@ -144,7 +129,7 @@ def get_df():
 
     mel_idx = 1
 
-    return df_train, df_val, df_test_blank, df_test_marked, df_test_rulers, df_test_atlasD, df_test_atlasC, df_test_ASAN, \
+    return df_train, df_val, df_test_atlasD, df_test_atlasC, df_test_ASAN, \
         df_test_MClassD, df_test_MClassC, df_34, df_56, mel_idx
 
 

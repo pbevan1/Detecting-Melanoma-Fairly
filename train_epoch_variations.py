@@ -10,18 +10,8 @@ from models import *
 
 # Defining criterion with weighted loss based on bias to be unlearned
 def criterion_func(df):
-    if args.instrument:
-        lst = df['instrument'].value_counts().sort_index().tolist()
-        lst2 = df['marked'].value_counts().sort_index().tolist()
-    elif args.instrument and args.rulers:
-        lst = df['instrument'].value_counts().sort_index().tolist()
-        lst2 = df['scale'].value_counts().sort_index().tolist()
-    elif args.sktone:
-        lst = df['fitzpatrick'].value_counts().sort_index().tolist()
-        lst2 = df['fitzpatrick'].value_counts().sort_index().tolist()  # placeholder
-    else:
-        lst = df['marked'].value_counts().sort_index().tolist()
-        lst2 = df['scale'].value_counts().sort_index().tolist()  # placeholder
+    lst = df['fitzpatrick'].value_counts().sort_index().tolist()
+    lst2 = df['fitzpatrick'].value_counts().sort_index().tolist()  # placeholder
 
     sum_lst = sum(lst)
     sum_lst2 = sum(lst2)
