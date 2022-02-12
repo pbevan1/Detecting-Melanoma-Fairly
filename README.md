@@ -1,11 +1,11 @@
-# Detecting Melanoma Fairly: Skin Tone Detection and Debiasing for Skin Lesion Classification
+# Detecting Melanoma Fairly: Skin Tone Detection and Debiasing for Skin Lesion Classification [[PDF](https://arxiv.org/pdf/2202.02832.pdf)]
 
 ## Method:
 
 "Convolutional Neural Networks have demonstrated dermatologist-level performance in the classification of melanoma and other skin lesions, but performance disparities between differing skin tones is an issue that should be addressed before widespread deployment. In this work, we look to uncover and subsequently tackle skin tone bias in melanoma classification. We utilise a modified variational autoencoder [[1]](https://www.aies-conference.com/2019/wp-content/papers/main/AIES-19_paper_220.pdf) to uncover skin tone bias in datasets commonly used as benchmarks. We propose a simple algorithm for automatically labelling the skin tone of lesion images, and use this to annotate the benchmark ISIC dataset. We subsequently use two leading bias unlearning techniques [[2]](https://openaccess.thecvf.com/content_CVPR_2019/papers/Kim_Learning_Not_to_Learn_Training_Deep_Neural_Networks_With_Biased_CVPR_2019_paper.pdf) 
-[[3]](https://www.robots.ox.ac.uk/~vgg/publications/2018/Alvi18/alvi18.pdf) to mitigate skin tone bias. Our experimental results provide evidence that our skin tone detection algorithm outperforms existing solutions and that \enquote{unlearning} skin tone improves generalisation and can reduce the performance disparity between lighter and darker skin tones [[4]](https://arxiv.org/abs/2104.09957)."
+[[3]](https://www.robots.ox.ac.uk/~vgg/publications/2018/Alvi18/alvi18.pdf) to mitigate skin tone bias. Our experimental results provide evidence that our skin tone detection algorithm outperforms existing solutions and that unlearning skin tone improves generalisation and can reduce the performance disparity between lighter and darker skin tones [[4]](https://arxiv.org/abs/2104.09957)."
 
-[Bevan and Atapour-Abarghouei, 2021]
+[[Bevan and Atapour-Abarghouei, 2021](https://arxiv.org/abs/2202.02832)]
 
 ---
 ---
@@ -136,3 +136,22 @@ To perturb a specific identified latent variable of the 50, make the command as 
 <pre>
 python run_db_vae.py  --test-no 28 --epochs 150 --DP --z-dim 512 --debias-type max50 --run-mode perturb --var-to-perturb <b>v1</b> --interp1 <b>x1</b> --interp2 <b>x2</b> --load-model --perturb-single
 </pre>
+---
+
+## Reference:
+
+[Detecting Melanoma Fairly: Skin Tone Detection and Debiasing for Skin Lesion Classification](https://arxiv.org/abs/2202.02832)
+(P. Bevan, A. Atapour-Abarghouei) [[pdf](https://arxiv.org/pdf/2202.02832.pdf)]
+
+```
+@misc{bevan2022detecting,
+      title={Detecting Melanoma Fairly: Skin Tone Detection and Debiasing for Skin Lesion Classification}, 
+      author={Peter J. Bevan and Amir Atapour-Abarghouei},
+      year={2022},
+      eprint={2202.02832},
+      archivePrefix={arXiv},
+      primaryClass={eess.IV}
+}
+}
+```
+---
