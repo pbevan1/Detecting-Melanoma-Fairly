@@ -53,8 +53,6 @@ into `data/images` as shown below. The manually downloaded Atlas data (`data/raw
 processed by this script. Note this script clears the `data/images` directory before populating it, so if you want to put other
 images in there, do this after running the `download.py` script.
 
-**NOTE**: The surgical markings/rulers test set from Heidelberg University [[3]](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6694463/) is not publicly available. Refer to the paper for contact details of the corresponding author to request data if necessary.
-
 The data directory should now look as follows:
 <pre>
 Melanoma-Bias  
