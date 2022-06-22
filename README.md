@@ -2,7 +2,7 @@
 
 ## Method:
 
-"Convolutional Neural Networks have demonstrated dermatologist-level performance in the classification of melanoma and other skin lesions, but performance disparities between differing skin tones is an issue that should be addressed before widespread deployment. In this work, we look to uncover and subsequently tackle skin tone bias in melanoma classification. We utilise a modified variational autoencoder [[1]](https://www.aies-conference.com/2019/wp-content/papers/main/AIES-19_paper_220.pdf) to uncover skin tone bias in datasets commonly used as benchmarks. We propose a simple algorithm for automatically labelling the skin tone of lesion images, and use this to annotate the benchmark ISIC dataset. We subsequently use two leading bias unlearning techniques [[2]](https://openaccess.thecvf.com/content_CVPR_2019/papers/Kim_Learning_Not_to_Learn_Training_Deep_Neural_Networks_With_Biased_CVPR_2019_paper.pdf) 
+"Convolutional Neural Networks have demonstrated dermatologist-level performance in the classification of melanoma and other skin lesions, but performance disparities between differing skin tones is an issue that should be addressed before widespread deployment. In this work, we look to tackle skin tone bias in melanoma classification. We propose a simple algorithm for automatically labelling the skin tone of lesion images, and use this to annotate the benchmark ISIC dataset. We subsequently use two leading bias unlearning techniques [[2]](https://openaccess.thecvf.com/content_CVPR_2019/papers/Kim_Learning_Not_to_Learn_Training_Deep_Neural_Networks_With_Biased_CVPR_2019_paper.pdf) 
 [[3]](https://www.robots.ox.ac.uk/~vgg/publications/2018/Alvi18/alvi18.pdf) to mitigate skin tone bias. Our experimental results provide evidence that our skin tone detection algorithm outperforms existing solutions and that unlearning skin tone improves generalisation and can reduce the performance disparity between lighter and darker skin tones [[4]](https://arxiv.org/abs/2104.09957)."
 
 [[Bevan and Atapour-Abarghouei, 2021](https://arxiv.org/abs/2202.02832)]
@@ -114,26 +114,6 @@ Pre labelled skin types are provided in `data/csv/isic_train_20-19-18-17.csv`, b
 <b>CLGR:</b> python train.py --test-no 20 --n-epochs 4 --debias-config TABE --GRL --sktone --CUDA_VISIBLE_DEVICES 0,1 --num-aux 6
 </pre>
 
----
-
-### Debiasing Variational Autoencoder
-
-We also use a [debiasing variational autoencoder](https://www.aies-conference.com/2019/wp-content/papers/main/AIES-19_paper_220.pdf) to uncover skin type bias in the ISIC dataset, adapted from JMitnik et al.'s [implementation](https://github.com/JMitnik/FacialDebiasing). The code for this is stored in the `DB_VAE` directory, except for the main script `run_db_vae.py` which is stored in the root directory.
-
-To train and evaluate this run a variation the following command:
-<pre>
-python run_db_vae.py  --test-no 28 --epochs 150 --DP --z-dim 512 --debias-type max50
-</pre>
-
-To perturb each of the top 50 latent variables in turn, add the below to the command (<b>x1</b> to be replace by the source image index and <b>x2</b> to be replaced by the target image index):
-<pre>
-python run_db_vae.py  --test-no 28 --epochs 150 --DP --z-dim 512 --debias-type max50 --run-mode perturb --var-to-perturb 50 --interp1 <b>x1</b> --interp2 <b>x2</b> --load-model
-</pre>
-
-To perturb a specific identified latent variable of the 50, make the command as below (<b>v1</b> being the index of the identified latent variable)
-<pre>
-python run_db_vae.py  --test-no 28 --epochs 150 --DP --z-dim 512 --debias-type max50 --run-mode perturb --var-to-perturb <b>v1</b> --interp1 <b>x1</b> --interp2 <b>x2</b> --load-model --perturb-single
-</pre>
 ---
 
 ## Reference:
